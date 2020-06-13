@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase.js"></script>   
+  <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-analytics.js"></script>
+  <script src="./js/crud.js"></script>
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <title>LITA</title>
+</head>
+
+<html>
+  <body>
+    <div class="wrapper">
+      <div class="title-box">
+        <h1 class="app-title">LITA</h1>
+        <p class="app-subTitle">～LIsten To Article～</p>
+      </div>
+      <div class="box_l">
+        <select id="voice-select" class="voice-select"></select>
+      </div>
+      
+      <div class="box_r">
+        <div class="get-article-parts">
+          <input type="text" id="articleURL" class="input" placeholder='URL'>
+          <a href="#" id="convertToVoice">記事取得</a>
+        </div>
+        <div class="scraping"></div>
+        <div id="article-list" class="article-list"></div>
+        <button id="continuous-playback" class="continue-play">連続再生<i class="far fa-play-circle continuous-icon"></i></button>
+        <button id="continuous-play-pause" class="continue-play">連続再生<i class="far fa-pause-circle continuous-icon"></i></button>
+        <button id="continuous-play-restart" class="continue-play">連続再生<i class="far fa-play-circle continuous-icon continuous-restart"></i></button>
+      </div>
+    </div>
+    
+    <script>
+        let titleData=''
+        let contentData=''
+        //記事取得ボタンでurlをPHPに渡す
+        $('#convertToVoice').on('click',function(){
+          let url=$('#articleURL').val()
+          $.ajax({
+            type:"GET",
+            url: "search.php",
+            data:{'data':url},
+            dataType:"json",
+            scriptCharset:'utf-8'
+          })
+            //成功したら
+            .then(
+            function(param){
+              console.log(param)
+              titleData=param[0][0]
+              contentData=param[1]
+              //保存する
+              save(titleData,contentData)
+            },
+            //失敗したら
+            function(XMLHttpRequest,textStatus,errorThrown){
+              console.log(errorThrown)
+              alert('ajaxFalth')
+            })
+        })
+
+        //記事リストを表示
+        show()
+
+        //ブラウザで使える音声をセレクトボックスに表示
+        setTimeout(function(){
+          const voiceSelect=$('#voice-select')
+          let voices=window.speechSynthesis.getVoices()
+          voices.forEach(voice => {
+            if(!voice.lang.match('ja')) return
+            const option = document.createElement('option')
+            option.value=voice.name
+            option.text = `${voice.name}`
+            voiceSelect.append(option)
+          })
+          selectVoiceChara()
+        },500)
+        
+        //読みあげる人を切り替える
+        $('#voice-select').on('change',function(){
+          selectVoiceChara()
+        })
+
+        //読みあげる人を切り替える処理
+        function selectVoiceChara(){
+          $('.box_l').find('img').remove()
+          let who_read=$('#voice-select').val()
+          if(who_read=="Microsoft Haruka Desktop - Japanese"){
+            $('.box_l').append('<img src="./img/voice_01.jpg">')
+          }else if(who_read=="Google 日本語"){
+            $('.box_l').append('<img src="./img/voice_02.jpg">')
+          }
+        }
+        
+
+        //再生する
+        $(document).on('click','.voiceStart',function(){
+          speechSynthesis.cancel()
+          //ボタンの切り替え
+          $('.voicePause').hide()
+          $('.voiceRestart').hide()
+          $('.voiceStart').show()
+          $('#continuous-play-pause').hide()
+          $('#continuous-play-restart').hide()
+          $('#continuous-playback').show()
+          $(this).hide()
+          $(this).parent().find('.voicePause').show()
+          let id=$(this).parent().attr('id')
+
+          //hiddenのメインテキストを取得
+          let content=$(this).parent().find($('input[type="hidden"]')).val()
+          console.log(content)
+          const title=$(this).parent().find('.title').text()
+          const contents=title+content
+          //WebAPIにテキストを読ませる
+          setTimeout(function(){speak(contents)},300)
+        })
+
+        //再生処理
+        function speak(content){
+          var voices = window.speechSynthesis.getVoices()
+          let voice=$('#voice-select').val()
+          let sentence=content.split(/["　" 、。]/)
+          for(let i=0; i<sentence.length; i++){
+            //発音機をインスタンス化
+            var uttr = new SpeechSynthesisUtterance()
+            // console.log(voices[i])
+            uttr.rate=1.3 //スピード
+            uttr.lang = 'ja-JP' //言語の設定
+            //声の選択
+            if(voice=='Microsoft Haruka Desktop - Japanese'){
+              uttr.voice=voices[0]
+            }else if(voice=="Google 日本語"){
+              uttr.voice=voices[12]
+            }
+            uttr.text=sentence[i]  //テキストを渡す
+            speechSynthesis.speak(uttr)
+          }
+        }
+
+        //一時停止する
+        $(document).on('click','.voicePause',function(){
+          $(this).hide()
+          $(this).parent().find('.voiceRestart').show()
+          speechSynthesis.pause()
+        })
+
+        //再再生する
+        $(document).on('click','.voiceRestart',function(){
+          $(this).hide()
+          $(this).parent().find('.voicePause').show()
+          setTimeout(function(){speechSynthesis.resume()},1800)
+        })
+
+        speechSynthesis.getVoices()
+
+
+        //連続再生する
+        $('#continuous-playback').on('click',function(){
+
+          //一時停止中のボタンを通常の再生ボタンに戻す
+          $('.voicePause').hide()
+          $('.voiceRestart').hide()
+          $('.voiceStart').show()
+          $(this).hide()
+          $('#continuous-play-pause').show()
+
+          //記事一覧を順番に取得してキューに追加&再生する
+          let lists=$('.article-lists')
+          for(let i=0;i<lists.length;i++){
+            let title=$('.article-lists').eq(i).find('.title').text()
+            let content=$('.article-lists').eq(i).find($('input[type="hidden"]')).val()
+            speechSynthesis.cancel()
+            setTimeout(function(){speak(title)},300)
+            setTimeout(function(){speak(content)},300)
+          }
+        })
+
+        //連続再生を一時停止する
+        $('#continuous-play-pause').on('click',function(){
+          $(this).hide()
+          $('#continuous-play-restart').show()
+          speechSynthesis.pause()
+        })
+
+        //連続再生を再再生する
+        $('#continuous-play-restart').on('click',function(){
+          $(this).hide()
+          $('#continuous-play-pause').show()
+          speechSynthesis.resume()
+        })
+
+        //記事を削除する
+        $(document).on('click','.fa-trash',function(){
+          const id=$(this).parent().attr('id')
+          db.doc(id).delete()
+        })
+        
+    </script>
+  </body>
+</html>

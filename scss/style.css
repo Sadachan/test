@@ -1,0 +1,71 @@
+li {
+  list-style: none; }
+
+body {
+  padding-left: 50px;
+  padding-right: 50px; }
+
+.app-title {
+  text-align: center;
+  margin-bottom: 10px;
+  letter-spacing: 4px; }
+
+.app-subTitle {
+  margin-top: 0;
+  text-align: center;
+  letter-spacing: 1.5px; }
+
+.get-rticle-parts {
+  width: 400px;
+  margin-top: 40px; }
+  .get-rticle-parts .input {
+    width: 320px; }
+
+.far {
+  position: absolute;
+  left: -3px;
+  margin-top: 13.8px;
+  cursor: pointer; }
+
+.voiceRestart, .continuous-restart {
+  color: red; }
+
+.article-list {
+  padding-top: 25px;
+  box-sizing: border-box; }
+  .article-list .article-lists {
+    position: relative;
+    box-sizing: border-box;
+    width: 400px; }
+    .article-list .article-lists .title {
+      margin-left: 17px;
+      font-size: 12px;
+      display: inline-block; }
+    .article-list .article-lists .fa-trash {
+      position: absolute;
+      margin-top: 13px;
+      cursor: pointer; }
+
+.continue-play {
+  display: block;
+  margin-top: 15px;
+  width: 100px;
+  position: absolute;
+  cursor: pointer;
+  text-indent: 3px; }
+  .continue-play .continuous-icon {
+    margin-left: 5px;
+    margin-top: 3.8px; }
+
+.box_l {
+  width: 430px;
+  display: inline-block; }
+
+.box_r {
+  width: 430px;
+  display: inline-block;
+  position: absolute;
+  top: 156px;
+  right: 0; }
+
+/*# sourceMappingURL=style.css.map */

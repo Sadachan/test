@@ -1,0 +1,71 @@
+li {
+  list-style: none; }
+
+body {
+  padding-left: 50px;
+  padding-right: 50px; }
+
+.get-article-parts {
+  width: 400px; }
+  .get-article-parts .input {
+    width: 320px; }
+
+.wrapper {
+  width: 850px;
+  display: block;
+  margin: 0 auto; }
+  .wrapper .title-box {
+    width: 850px;
+    margin-bottom: 55px; }
+    .wrapper .title-box .app-title {
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: 4px; }
+    .wrapper .title-box .app-subTitle {
+      margin-top: 0;
+      text-align: center;
+      letter-spacing: 1.5px; }
+  .wrapper .far {
+    position: absolute;
+    left: -3px;
+    margin-top: 13.8px;
+    cursor: pointer; }
+  .wrapper .voiceRestart, .wrapper .continuous-restart {
+    color: red; }
+  .wrapper .article-list {
+    padding-top: 25px; }
+    .wrapper .article-list .article-lists {
+      position: relative;
+      box-sizing: border-box;
+      width: 400px; }
+      .wrapper .article-list .article-lists .title {
+        margin-left: 17px;
+        font-size: 12px;
+        display: inline-block; }
+      .wrapper .article-list .article-lists .fa-trash {
+        position: absolute;
+        margin-top: 13px;
+        cursor: pointer; }
+  .wrapper .continue-play {
+    display: block;
+    margin-top: 15px;
+    width: 100px;
+    position: absolute;
+    cursor: pointer;
+    text-indent: 3px; }
+    .wrapper .continue-play .continuous-icon {
+      margin-left: 5px;
+      margin-top: 3.8px; }
+  .wrapper .voice-select {
+    width: 295px;
+    vertical-align: top; }
+  .wrapper .box_l {
+    width: 350px;
+    display: inline-block; }
+    .wrapper .box_l img {
+      width: 295px; }
+  .wrapper .box_r {
+    width: 400px;
+    position: absolute;
+    margin-right: 45px;
+    display: inline-block; }
